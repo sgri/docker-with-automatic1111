@@ -1,15 +1,20 @@
-FROM ubuntu:22.04
-RUN apt update && apt install -y sudo python3 python3-pip python3-venv git libgl1 libglib2.0-0 pciutils google-perftools \
- gcc wget bash-completion bc vim && apt clean
+FROM ubuntu:24.04
+ARG USER_ID
+RUN apt update && apt dist-upgrade -y && apt install -y sudo git libgl1 libglib2.0-0 pciutils google-perftools \
+ gcc wget bash-completion bc vim passwd curl \
+ make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
+ && apt clean
+RUN deluser --remove-all-files ubuntu
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 0
-RUN update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 0
-RUN pip install --upgrade pip
-RUN useradd -m -s /bin/bash -G sudo stable-diffusion
+RUN useradd -m -s /bin/bash -g users -G sudo --uid ${USER_ID} stable-diffusion
+
 WORKDIR /home/stable-diffusion
-ADD main.sh .
-RUN chown stable-diffusion main.sh
 USER stable-diffusion
+ADD install-python.sh .
+RUN ./install-python.sh
+ADD main.sh .
 ENTRYPOINT ["./main.sh"]
+
+
 
 
