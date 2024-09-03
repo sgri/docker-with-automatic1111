@@ -9,6 +9,11 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN useradd -m -s /bin/bash -g users -G sudo --uid ${USER_ID} stable-diffusion
 
 WORKDIR /home/stable-diffusion
+
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+RUN dpkg --install cuda-keyring_1.1-1_all.deb && rm cuda-keyring_1.1-1_all.deb
+RUN apt update && apt install -y cuda-toolkit-12-6 cudnn9-cuda-12 && apt clean
+
 USER stable-diffusion
 ADD install-python.sh .
 RUN ./install-python.sh
