@@ -15,4 +15,4 @@ fi
 cd workspace
 wget -qN https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh
 chmod +x webui.sh
-./webui.sh "$@"
+exec ./webui.sh "$@"
