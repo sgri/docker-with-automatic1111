@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-dataDir="var/lib/Stable-Diffusion"
+dataDir="/var/lib/Stable-Diffusion"
 sudo mkdir -p "$dataDir"
 sudo chown :users $dataDir
 sudo chmod g+ws $dataDir
