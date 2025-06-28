@@ -19,7 +19,7 @@ function handle_sigint {
 trap handle_sigint SIGINT
 docker run -e PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:32 \
   --rm --name stable-diffusion-webui \
-  --network host \
+  -p 7860:7860 \
   --gpus all \
   -u $(id -u) \
   -v "$dataDir/workspace":/home/stable-diffusion/workspace \
