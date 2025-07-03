@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
-dataDir="/var/lib/Stable-Diffusion"
-sudo mkdir -p "$dataDir"
-sudo chown :users $dataDir
-sudo chmod g+ws $dataDir
+dataDir="${HOME}/.local/share/Stable Diffusion"
 mkdir -p "$dataDir/workspace"
 mkdir -p "$dataDir/cache"
 echo "Using persistent data folder $dataDir."
