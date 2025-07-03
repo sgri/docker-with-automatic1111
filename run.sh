@@ -4,7 +4,6 @@ dataDir="${HOME}/.local/share/Stable Diffusion"
 mkdir -p "$dataDir/workspace"
 mkdir -p "$dataDir/cache"
 echo "Using persistent data folder $dataDir."
-set -x
 
 # Function to run when Ctrl+C is pressed
 function handle_sigint {
@@ -12,9 +11,11 @@ function handle_sigint {
     docker stop stable-diffusion-webui
     exit 1
 }
-
 trap handle_sigint SIGINT
+
+set -x
 docker run -e PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:32 \
+  --rm \
   --name stable-diffusion-webui \
   -p 7860:7860 \
   --gpus all \
