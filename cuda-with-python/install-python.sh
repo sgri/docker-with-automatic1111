@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 # Install pyenv
 curl https://pyenv.run | bash
 

@@ -1,0 +1,97 @@
+version: 2.1
+
+parameters:
+  run_cuda:
+    type: boolean
+    default: false
+  run_a1111:
+    type: boolean
+    default: false
+
+executors:
+  linux-machine:
+    machine: true
+
+commands:
+  build-image:
+    parameters:
+      image_name:
+        type: string
+      image_tags:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Activate service account
+          command: |
+            set -euo pipefail
+            build_agent_key=$(mktemp)
+            echo "${BUILD_AGENT_KEY}" > $build_agent_key
+            gcloud auth activate-service-account --key-file=$build_agent_key
+            
+            echo "set -euo pipefail" >> "$BASH_ENV"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=${build_agent_key}" >> $BASH_ENV
+      - run:
+          name: Connect Docker to artifact registry
+          command: |
+            gcloud auth configure-docker us-central1-docker.pkg.dev
+      - run:
+          name: Build Docker image
+          command: |
+            cd << parameters.image_name >>
+            docker build --build-arg PROJECT_ID=${PROJECT_ID} -t << parameters.image_name >> .
+      - run:
+          name: Push Docker image
+          command: |
+            IMAGE_NAME=us-central1-docker.pkg.dev/${PROJECT_ID}/amber/<< parameters.image_name >>
+            for tag in latest << parameters.image_tags >>; do
+              docker tag  << parameters.image_name >> ${IMAGE_NAME}:${tag}
+              docker push ${IMAGE_NAME}:${tag}            
+            done
+      - run:
+          name: Clean up
+          when: always
+          command: |
+            rm -f $GOOGLE_APPLICATION_CREDENTIALS 
+
+jobs:
+  build-automatik1111:
+    executor: linux-machine
+    steps:
+      - build-image:
+          image_name: automatik1111
+          image_tags: cuda12.2 python3.10.14
+  build-cuda-with-python:
+    executor: linux-machine
+    steps:
+      - build-image:
+          image_name: cuda-with-python
+          image_tags: cuda12.2 python3.10.14
+
+workflows:
+  cuda-with-python:
+    when: << pipeline.parameters.run_cuda >>
+    jobs:
+      - build-cuda-with-python
+  automatik1111:
+    when: << pipeline.parameters.run_a1111 >>
+    jobs:
+      - build-automatik1111
+  cuda-with-python-manual:
+    when:
+      not: << pipeline.parameters.run_cuda >>
+    jobs:
+      - approve:
+          type: approval
+      - build-cuda-with-python:
+          requires:
+            - approve
+  automatik1111-manual:
+    when:
+      not: << pipeline.parameters.run_cuda >>
+    jobs:
+      - approve:
+          type: approval
+      - build-automatik1111:
+          requires:
+            - approve

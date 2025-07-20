@@ -1,0 +1,16 @@
+version: 2.1
+setup: true
+
+orbs:
+  path-filtering: circleci/path-filtering@2 # latest major as of 2025‑07
+
+workflows:
+  detect-changes:
+    jobs:
+      - path-filtering/filter:
+          name: detect-dirs
+          base-revision: main          # compare against main
+          config-path: .circleci/continue.yml
+          mapping: |                   # path‑to‑param map (regex  param  value)
+            cuda-with-python/.*        run_cuda  true
+            automatik1111/.*           run_a1111 true
