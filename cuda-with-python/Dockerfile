@@ -21,7 +21,7 @@ RUN apt install -y --no-install-recommends \
     tk-dev \
     xz-utils \
     zlib1g-dev && \
-  apt clean \
+  apt clean
       
 USER artist
 COPY install-python.sh /tmp/
