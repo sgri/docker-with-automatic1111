@@ -22,10 +22,8 @@ RUN apt update && \
       libnvidia-compute-535 \
       libnvidia-ml-dev \
       cuda-toolkit-12-6 && \
-      apt clean && rm -rf /var/lib/apt/lists/*
-    
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-RUN useradd -m -s /bin/bash -g users -G sudo artist
+      apt clean && rm -rf /var/lib/apt/lists/* && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+    useradd -m -s /bin/bash -g users -G sudo artist
 WORKDIR /home/artist
 USER artist
