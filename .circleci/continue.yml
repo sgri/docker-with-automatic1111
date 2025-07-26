@@ -42,7 +42,7 @@ commands:
           name: Build Docker image
           command: |
             cd << parameters.image_name >>
-            docker build --progress=plain << params.build_args >> < -t << parameters.image_name >> .
+            docker build --progress=plain << parameters.build_args >> < -t << parameters.image_name >> .
       - run:
           name: Push Docker image
           command: |
