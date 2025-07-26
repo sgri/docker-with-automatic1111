@@ -3,23 +3,40 @@ set -euo pipefail
 
 usage() {
   cat <<EOF
-Usage: $(basename "$0") [IMAGE_NAME]
+Usage: $(basename "$0") [-h] [-i IMAGE_NAME] [-- additional docker args]
 
 Runs the automatik1111 Docker container.
-Arguments:
-  IMAGE_NAME   (optional) Docker image name to use. Defaults to 'automatik1111'.
-Any additional arguments are passed to 'docker run'.
+
+Options:
+  -h              Show this help message and exit.
+  -i IMAGE_NAME   Docker image name to use. Defaults to 'automatik1111'.
+
+Any additional arguments after '--' are passed to 'docker run'.
 EOF
-  exit 1
+  exit 0
 }
 
-if [[ $# -gt 1 ]]; then
-  usage
-  exit 1
-fi
+image_name="automatik1111"
 
-image_name="${1:-automatik1111}"
-shift || true
+while getopts ":hi:" opt; do
+  case $opt in
+    h)
+      usage
+      ;;
+    i)
+      image_name="$OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND -1))
 
 dataDir="${HOME}"/.local/share/automatik1111
 
@@ -37,7 +54,6 @@ function handle_sigint {
     exit 1
 }
 trap handle_sigint SIGINT
-
 
 set -x
 docker run \
