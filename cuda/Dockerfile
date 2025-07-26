@@ -18,11 +18,11 @@ RUN apt update && \
     curl https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb  -o /tmp/cuda-keyring.deb && \
     dpkg --install /tmp/cuda-keyring.deb && rm /tmp/cuda-keyring.deb && \
     apt update && apt install -y --no-install-recommends \
-      cuda-toolkit-12-6 && \
       libcudnn9-cuda-12 \
       libnvidia-compute-535 \
       libnvidia-ml-dev \
-      apt clean
+      cuda-toolkit-12-6 && \
+      apt clean && rm -rf /var/lib/apt/lists/*
     
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
