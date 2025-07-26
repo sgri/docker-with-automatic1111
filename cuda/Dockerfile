@@ -21,7 +21,7 @@ RUN apt update && \
       libcudnn9-cuda-12 \
       libnvidia-compute-535 \
       libnvidia-ml-dev \
-      cuda-toolkit-12-6 && \
+      nvidia-utils-535 && \
       apt clean && rm -rf /var/lib/apt/lists/* && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     useradd -m -s /bin/bash -g users -G sudo artist
