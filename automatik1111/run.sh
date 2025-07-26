@@ -27,4 +27,4 @@ docker run \
   --gpus all \
   -v "$dataDir/workspace":/home/artist/workspace \
   -v "$dataDir/cache":/home/artist/.cache \
-  us-central1-docker.pkg.dev/andromeda-456013/amber/automatik1111 "$@"
+  automatik1111 "$@"

@@ -4,41 +4,25 @@ LABEL description="Ubuntu-based image with CUDA and Python, tailored for Stable 
 
 RUN apt update && \
     apt dist-upgrade -y && \
-    apt install -y \
-        bash-completion \
-        bc \
-        build-essential \
+    apt install -y --no-install-recommends \
+        ca-certificates \
         curl \
-        gcc \
-        git \
-        google-perftools \
-        libbz2-dev \
-        libffi-dev \
-        libgl1 \
-        libglib2.0-0 \
-        liblzma-dev \
-        libncursesw5-dev \
-        libreadline-dev \
-        libsqlite3-dev \
-        libssl-dev \
-        libxml2-dev \
-        libxmlsec1-dev \
-        llvm \
-        make \
-        nvidia-driver-535 \
+        gnupg \
+        lsb-release \
         mc \
-        passwd \
-        pciutils \
-        sudo \
-        tk-dev \
+        sudo  \
+        telnet \
         vim \
-        wget \
-        zlib1g-dev && \
-    apt clean
+        wget 
+
 RUN curl https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb  -o /tmp/cuda-keyring.deb && \
     dpkg --install /tmp/cuda-keyring.deb && rm /tmp/cuda-keyring.deb && \
-    apt update && apt install -y cuda-toolkit-12-6 cudnn9-cuda-12 &&  \
-    apt clean
+    apt update && apt install -y --no-install-recommends \
+      libcudnn9-cuda-12 \
+      libnvidia-compute-535 \
+      libnvidia-ml-dev \
+      cuda-toolkit-12-6 && \
+      apt clean && rm -rf /var/lib/apt/lists/*
     
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 

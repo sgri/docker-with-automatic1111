@@ -1,4 +1,5 @@
-FROM us-central1-docker.pkg.dev/andromeda-456013/amber/cuda-with-python
+ARG BASE_IMAGE=cuda-with-python
+FROM ${BASE_IMAGE}
 LABEL maintainer="Sergey Grigoriev <s.a.grigoriev@gmail.com>"
 LABEL description="Automatik1111 web UI for Stable Diffusion"
 
