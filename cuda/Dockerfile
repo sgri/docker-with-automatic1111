@@ -9,6 +9,7 @@ RUN apt update && \
         curl \
         gnupg \
         google-perftools \
+        libgl1 \
         lsb-release \
         mc \
         sudo  \
@@ -22,7 +23,7 @@ RUN apt update && \
       libnvidia-compute-535 \
       libnvidia-ml-dev \
       nvidia-utils-535 && \
-      apt clean && rm -rf /var/lib/apt/lists/* && \
+      apt clean && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     useradd -m -s /bin/bash -g users -G sudo artist
 WORKDIR /home/artist
