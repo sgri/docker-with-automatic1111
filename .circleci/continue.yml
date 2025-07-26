@@ -82,7 +82,7 @@ jobs:
       - build-image:
           image_name: automatik1111
           image_tags: cuda12.2 python3.10.14
-          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda-with-python:cuda12.2-python3.10.14
+          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda-with-python:cuda12.2:python3.10.14
 
 workflows:
   cuda:
