@@ -19,6 +19,9 @@ commands:
         type: string
       image_tags:
         type: string
+      build_args:  
+        type: string
+        default: ""
     steps:
       - checkout
       - run:
@@ -39,12 +42,12 @@ commands:
           name: Build Docker image
           command: |
             cd << parameters.image_name >>
-            docker build --build-arg PROJECT_ID=${PROJECT_ID} -t << parameters.image_name >> .
+            docker build --progress=plain << param.build_args >> < -t << parameters.image_name >> .
       - run:
           name: Push Docker image
           command: |
             IMAGE_NAME=us-central1-docker.pkg.dev/${PROJECT_ID}/amber/<< parameters.image_name >>
-            for tag in latest << parameters.image_tags >>; do
+            for tag in << parameters.image_tags >>; do
               docker tag  << parameters.image_name >> ${IMAGE_NAME}:${tag}
               docker push ${IMAGE_NAME}:${tag}            
             done
@@ -61,6 +64,7 @@ jobs:
       - build-image:
           image_name: automatik1111
           image_tags: cuda12.2 python3.10.14
+          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/amber/cuda-with-python:cuda12.2-python3.10.14
   build-cuda-with-python:
     executor: linux-machine
     steps:
