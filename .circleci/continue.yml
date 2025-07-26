@@ -4,6 +4,9 @@ parameters:
   run_cuda:
     type: boolean
     default: false
+  run_cuda_with_python:
+    type: boolean
+    default: false
   run_a1111:
     type: boolean
     default: false
@@ -19,6 +22,9 @@ commands:
         type: string
       image_tags:
         type: string
+      build_args:
+        type: string
+        default: ""
     steps:
       - checkout
       - run:
@@ -39,12 +45,12 @@ commands:
           name: Build Docker image
           command: |
             cd << parameters.image_name >>
-            docker build --build-arg PROJECT_ID=${PROJECT_ID} -t << parameters.image_name >> .
+            docker build --progress=plain << parameters.build_args >> -t << parameters.image_name >> .
       - run:
           name: Push Docker image
           command: |
             IMAGE_NAME=us-central1-docker.pkg.dev/${PROJECT_ID}/amber/<< parameters.image_name >>
-            for tag in latest << parameters.image_tags >>; do
+            for tag in << parameters.image_tags >>; do
               docker tag  << parameters.image_name >> ${IMAGE_NAME}:${tag}
               docker push ${IMAGE_NAME}:${tag}            
             done
@@ -55,31 +61,54 @@ commands:
             rm -f $GOOGLE_APPLICATION_CREDENTIALS 
 
 jobs:
-  build-automatik1111:
+  build-cuda:
     executor: linux-machine
     steps:
       - build-image:
-          image_name: automatik1111
-          image_tags: cuda12.2 python3.10.14
+          image_name: cuda
+          image_tags: nvidia535-libcudnn9-cuda12
+  
   build-cuda-with-python:
     executor: linux-machine
     steps:
       - build-image:
           image_name: cuda-with-python
-          image_tags: cuda12.2 python3.10.14
+          image_tags: nvidia535-libcudnn9-cuda12-python3.10.14
+          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda:nvidia535-libcudnn9-cuda12
+  
+  build-automatik1111:
+    executor: linux-machine
+    steps:
+      - build-image:
+          image_name: automatik1111
+          image_tags: nvidia535-libcudnn9-cuda12-python3.10.14
+          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda-with-python:nvidia535-libcudnn9-cuda12-python3.10.14
 
 workflows:
-  cuda-with-python:
+  cuda:
     when: << pipeline.parameters.run_cuda >>
+    jobs:
+      - build-cuda
+  cuda-with-python:
+    when: << pipeline.parameters.run_cuda_with_python >>
     jobs:
       - build-cuda-with-python
   automatik1111:
     when: << pipeline.parameters.run_a1111 >>
     jobs:
       - build-automatik1111
-  cuda-with-python-manual:
+  cuda-manual:
     when:
       not: << pipeline.parameters.run_cuda >>
+    jobs:
+      - approve:
+          type: approval
+      - build-cuda:
+          requires:
+            - approve
+  cuda-with-python-manual:
+    when:
+      not: << pipeline.parameters.run_cuda_with_python >>
     jobs:
       - approve:
           type: approval
@@ -88,7 +117,7 @@ workflows:
             - approve
   automatik1111-manual:
     when:
-      not: << pipeline.parameters.run_cuda >>
+      not: << pipeline.parameters.run_a1111 >>
     jobs:
       - approve:
           type: approval

@@ -12,5 +12,6 @@ workflows:
           base-revision: main          # compare against main
           config-path: .circleci/continue.yml
           mapping: |                   # path‑to‑param map (regex  param  value)
-            cuda-with-python/.*        run_cuda  true
+            cuda/.*        run_cuda  true
+            cuda-with-python/.*        run_cuda_with_python  true
             automatik1111/.*           run_a1111 true

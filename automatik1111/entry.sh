@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 script=$(basename "$0")
+
+if ! nvidia-smi; then
+  echo "NVIDIA GPU is not available. Exiting."
+  exit 1
+fi
+
 . .activate-pyenv
 if [ ! -d workspace ]; then
   echo "The workspace folder is not mounted"

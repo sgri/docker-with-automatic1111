@@ -1,6 +1,43 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [-h] [-i IMAGE_NAME] [-- additional docker args]
+
+Runs the automatik1111 Docker container.
+
+Options:
+  -h              Show this help message and exit.
+  -i IMAGE_NAME   Docker image name to use. Defaults to 'automatik1111'.
+
+Any additional arguments after '--' are passed to 'docker run'.
+EOF
+  exit 0
+}
+
+image_name="automatik1111"
+
+while getopts ":hi:" opt; do
+  case $opt in
+    h)
+      usage
+      ;;
+    i)
+      image_name="$OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
 dataDir="${HOME}"/.local/share/automatik1111
 
 echo "Using persistent data folder  $dataDir."
@@ -11,7 +48,6 @@ for f in workspace cache; do
     chmod 777 "$folder"
 done
 
-# Function to run when Ctrl+C is pressed
 function handle_sigint {
     echo "Ctrl+C detected, stopping the container."
     docker stop automatik1111
@@ -27,4 +63,4 @@ docker run \
   --gpus all \
   -v "$dataDir/workspace":/home/artist/workspace \
   -v "$dataDir/cache":/home/artist/.cache \
-  us-central1-docker.pkg.dev/andromeda-456013/amber/automatik1111 "$@"
+  $image_name "$@"
