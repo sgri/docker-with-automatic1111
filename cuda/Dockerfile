@@ -8,6 +8,7 @@ RUN apt update && \
         ca-certificates \
         curl \
         gnupg \
+        google-perftools \
         lsb-release \
         mc \
         sudo  \
