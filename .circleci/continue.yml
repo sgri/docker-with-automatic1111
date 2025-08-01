@@ -66,23 +66,23 @@ jobs:
     steps:
       - build-image:
           image_name: cuda
-          image_tags: nvidia535-libcudnn9-cuda12
+          image_tags: nvidia535-cuda12.2
   
   build-cuda-with-python:
     executor: linux-machine
     steps:
       - build-image:
           image_name: cuda-with-python
-          image_tags: nvidia535-libcudnn9-cuda12-python3.10.14
-          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda:nvidia535-libcudnn9-cuda12
+          image_tags: nvidia535-cuda12.2-python3.10.14
+          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda:nvidia535-cuda12.2
   
   build-automatik1111:
     executor: linux-machine
     steps:
       - build-image:
           image_name: automatik1111
-          image_tags: nvidia535-libcudnn9-cuda12-python3.10.14
-          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda-with-python:nvidia535-libcudnn9-cuda12-python3.10.14
+          image_tags: nvidia535-cuda12.2-python3.10.14
+          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda-with-python:nvidia535-cuda12.2-python3.10.14
 
 workflows:
   cuda:

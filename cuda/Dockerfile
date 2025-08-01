@@ -9,6 +9,7 @@ RUN apt update && \
         curl \
         gnupg \
         google-perftools \
+        kmod \
         libgl1 \
         lsb-release \
         mc \
