@@ -9,6 +9,7 @@ Runs the automatik1111 Docker container.
 
 Options:
   -h              Show this help message and exit.
+  -d              Persistent data folder. Defaults to ~/.local/share/automatik1111.
   -i IMAGE_NAME   Docker image name to use. Defaults to 'automatik1111'.
 
 Any additional arguments after '--' are passed to 'docker run'.
@@ -17,11 +18,15 @@ EOF
 }
 
 image_name="automatik1111"
+data_folder="$HOME/.local/share/automatik1111"
 
-while getopts ":hi:" opt; do
+while getopts ":hi:d:" opt; do
   case $opt in
     h)
       usage
+      ;;
+    d):
+      data_folder="$OPTARG"
       ;;
     i)
       image_name="$OPTARG"
@@ -38,11 +43,9 @@ while getopts ":hi:" opt; do
 done
 shift $((OPTIND -1))
 
-dataDir="${HOME}"/.local/share/automatik1111
-
-echo "Using persistent data folder  $dataDir."
+echo "Using persistent data folder  $data_folder."
 for f in workspace cache; do
-    folder="$dataDir/$f"
+    folder="$data_folder/$f"
     mkdir -p "$folder"
     echo "Persistent folder $folder will be mounted to the container."
     chmod 777 "$folder"
@@ -61,6 +64,6 @@ docker run \
   --name automatik1111 \
   -p 7860:7860 \
   --gpus all \
-  -v "$dataDir/workspace":/home/artist/workspace \
-  -v "$dataDir/cache":/home/artist/.cache \
+  -v "$data_folder/workspace":/home/artist/workspace \
+  -v "$data_folder/cache":/home/artist/.cache \
   $image_name "$@"
