@@ -12,6 +12,7 @@ RUN apt update && \
         libgl1 \
         lsb-release \
         mc \
+        pciutils \
         sudo  \
         telnet \
         vim \
