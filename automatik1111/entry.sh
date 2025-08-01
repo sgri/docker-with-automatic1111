@@ -2,7 +2,7 @@
 set -euo pipefail
 script=$(basename "$0")
 
-if ! nvidia-smi; then
+if ! nvidia-smi > /dev/null; then
   echo "NVIDIA GPU is not available. Exiting."
   exit 1
 fi
