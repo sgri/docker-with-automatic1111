@@ -13,6 +13,7 @@ RUN apt update && \
         libgl1 \
         lsb-release \
         mc \
+        nano \
         pciutils \
         sudo  \
         telnet \
