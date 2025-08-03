@@ -21,9 +21,9 @@ RUN apt install -y --no-install-recommends \
     tk-dev \
     xz-utils \
     zlib1g-dev && \
-  apt clean
-WORKDIR /tmp
-RUN wget https://www.python.org/ftp/python/3.10.14/Python-3.10.14.tgz && \
+  apt clean && \
+  cd  /tmp && \
+  wget https://www.python.org/ftp/python/3.10.14/Python-3.10.14.tgz && \
   tar -xzf Python-3.10.14.tgz && \
   pushd Python-3.10.14 && \
   ./configure --prefix=/opt/python-3.10.14 --enable-optimizations && \
@@ -33,9 +33,9 @@ RUN wget https://www.python.org/ftp/python/3.10.14/Python-3.10.14.tgz && \
   rm -R Python-3.10.14 && \
   rm  Python-3.10.14.tgz && \
   ln -s /opt/python-3.10.14/bin/python3.10 /opt/python-3.10.14/bin/python && \
-  ln -s /opt/python-3.10.14/bin/pip3.10 /opt/python-3.10.14/bin/pip                   
-
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-  useradd -m -s /bin/bash -G sudo artist
+  ln -s /opt/python-3.10.14/bin/pip3.10 /opt/python-3.10.14/bin/pip && \                   
+  echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+  useradd -m -s /bin/bash -G sudo artist \
+    
 WORKDIR /home/artist
 USER artist
