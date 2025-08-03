@@ -24,7 +24,7 @@ RUN apt install -y --no-install-recommends \
   apt clean
 WORKDIR /tmp
 RUN wget https://www.python.org/ftp/python/3.10.14/Python-3.10.14.tgz && \
-  tar -xzf Python-3.10.14.tgz \
+  tar -xzf Python-3.10.14.tgz && \
   pushd Python-3.10.14 && \
   ./configure --prefix=/opt/python-3.10.14 --enable-optimizations && \
   make -j$(nproc) && \
