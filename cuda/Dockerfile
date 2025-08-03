@@ -27,4 +27,5 @@ RUN apt update && \
       nvidia-utils-535 && \
       apt clean && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-      useradd -m -s /bin/bash -G sudo artist
+      useradd -m -s /bin/bash -G sudo artist && \
+      deluser --remove-home ubuntu 
