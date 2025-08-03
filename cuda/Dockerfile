@@ -25,8 +25,4 @@ RUN apt update && \
       libnvidia-compute-535 \
       libnvidia-ml-dev \
       nvidia-utils-535 && \
-      apt clean && \
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    useradd -m -s /bin/bash -g users -G sudo artist
-WORKDIR /home/artist
-USER artist
+      apt clean

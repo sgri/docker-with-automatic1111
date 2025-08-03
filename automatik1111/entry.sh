@@ -7,10 +7,6 @@ if ! nvidia-smi > /dev/null; then
   exit 1
 fi
 
-. .activate-pyenv
-if [ ! -d workspace ]; then
-  echo "The workspace folder is not mounted"
-fi
 lock_file=workspace/${script}.lock
 if ! {
   exec 9> $lock_file
@@ -20,6 +16,7 @@ if ! {
   exit 1
 fi
 cd workspace
+export PATH="/opt/python-3.10.14/bin:$PATH"
 wget -qN https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh
 chmod +x webui.sh
 umask 000 # Let the host user access to the workspace folder
