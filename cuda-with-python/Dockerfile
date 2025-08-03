@@ -25,11 +25,11 @@ RUN apt install -y --no-install-recommends \
   cd  /tmp && \
   wget https://www.python.org/ftp/python/3.10.14/Python-3.10.14.tgz && \
   tar -xzf Python-3.10.14.tgz && \
-  pushd Python-3.10.14 && \
+  cd Python-3.10.14 && \
   ./configure --prefix=/opt/python-3.10.14 --enable-optimizations && \
   make -j$(nproc) && \
   make altinstall && \
-  popd  && \
+  cd .. && \
   rm -R Python-3.10.14 && \
   rm  Python-3.10.14.tgz && \
   ln -s /opt/python-3.10.14/bin/python3.10 /opt/python-3.10.14/bin/python && \
