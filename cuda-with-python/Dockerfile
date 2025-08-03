@@ -33,9 +33,7 @@ RUN apt install -y --no-install-recommends \
   rm -R Python-3.10.14 && \
   rm  Python-3.10.14.tgz && \
   ln -s /opt/python-3.10.14/bin/python3.10 /opt/python-3.10.14/bin/python && \
-  ln -s /opt/python-3.10.14/bin/pip3.10 /opt/python-3.10.14/bin/pip && \                   
-  echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-  useradd -m -s /bin/bash -G sudo artist \
+  ln -s /opt/python-3.10.14/bin/pip3.10 /opt/python-3.10.14/bin/pip
     
 WORKDIR /home/artist
 USER artist
