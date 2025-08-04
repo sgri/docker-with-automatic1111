@@ -1,23 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
-script=$(basename "$0")
 
 if ! nvidia-smi > /dev/null; then
   echo "NVIDIA GPU is not available. Exiting."
   exit 1
 fi
 
-lock_file=workspace/${script}.lock
-if ! {
-  exec 9> $lock_file
-  flock -n 9;
-}; then
-  echo "The $script is already running, lock file exists: $lock_file"
-  exit 1
+if [[ -z "$USER_ID" ]]; then
+  echo "USER_ID environment variable is not set. Please set it to your user ID."
 fi
-cd workspace
-export PATH="/opt/python-3.10.14/bin:$PATH"
-wget -qN https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh
-chmod +x webui.sh
-umask 000 # Let the host user access to the workspace folder
-exec ./webui.sh "$@"
+if [[ -z "$GROUP_ID" ]]; then
+  echo "GROUP_ID environment variable is not set. Please set it to your user ID."
+fi
+
+if ! getent group $GROUP_ID > /dev/null; then
+  groupadd -g $GROUP_ID automatik1111
+fi
+if id automatik1111 &>/dev/null; then
+  usermod -u $USER_ID -g $GROUP_ID automatik1111
+else
+  useradd -M -s /bin/bash -u $USER_ID -g $GROUP_ID automatik1111
+fi
+   
+unset USER_ID
+unset GROUP_ID
+exec sudo -u automatik1111 /usr/local/bin/start.sh "$@"

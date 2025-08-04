@@ -10,6 +10,7 @@ RUN apt update && \
         gnupg \
         google-perftools \
         kmod \
+        less \
         libgl1 \
         lsb-release \
         mc \
@@ -27,5 +28,4 @@ RUN apt update && \
       nvidia-utils-535 && \
       apt clean && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-      useradd -m -s /bin/bash -G sudo artist && \
       deluser --remove-home ubuntu 

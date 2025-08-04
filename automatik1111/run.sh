@@ -43,13 +43,8 @@ while getopts ":hi:d:" opt; do
 done
 shift $((OPTIND -1))
 
-echo "Using persistent data folder  $data_folder."
-for f in workspace cache; do
-    folder="$data_folder/$f"
-    mkdir -p "$folder"
-    echo "Persistent folder $folder will be mounted to the container."
-    chmod 777 "$folder"
-done
+mkdir -p "$data_folder"
+echo "Persistent folder $data_folder will be mounted to the container."
 
 function handle_sigint {
     echo "Ctrl+C detected, stopping the container."
@@ -61,9 +56,10 @@ trap handle_sigint SIGINT
 set -x
 docker run \
   --rm \
+  -e USER_ID="$(id -u)" \
+  -e GROUP_ID="$(id -g)" \
   --name automatik1111 \
   -p 7860:7860 \
   --gpus all \
-  -v "$data_folder/workspace":/home/artist/workspace \
-  -v "$data_folder/cache":/home/artist/.cache \
+  -v "$data_folder":/home/automatik1111 \
   $image_name "$@"

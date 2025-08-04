@@ -35,5 +35,3 @@ RUN apt install -y --no-install-recommends \
   ln -s /opt/python-3.10.14/bin/python3.10 /opt/python-3.10.14/bin/python && \
   ln -s /opt/python-3.10.14/bin/pip3.10 /opt/python-3.10.14/bin/pip
     
-WORKDIR /home/artist
-USER artist
