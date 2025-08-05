@@ -44,7 +44,7 @@ done
 shift $((OPTIND -1))
 
 mkdir -p "$data_folder"
-echo "Persistent folder $data_folder will be mounted to the container."
+echo -e "Persistent folder \033[0;32m${data_folder}\033[0m will be mounted to the container."
 
 function handle_sigint {
     echo "Ctrl+C detected, stopping the container."
