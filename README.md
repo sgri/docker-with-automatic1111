@@ -14,15 +14,14 @@ image is optimized for Nvidia GPUs.
 
 * Linux
 * Docker
-* Nvidia CUDA verstion 12.2 or later.
+* Nvidia CUDA version 12.2 or later.
 
 # Running the Image
 
 To start the image, use:
 
 ```bash
-cd automatik1111
-./run.sh --listen --xformers
+./a1111.sh run --listen --xformers
 ```
 
 When running the script for the first time, it will take a while to install Automatik1111 in the
@@ -34,7 +33,7 @@ All the arguments passed to run.sh are forwarded
 to [webui.sh](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/master/webui.sh). Run the following command to list available arguments:
 
 ```bash
-./run.sh --help
+./a1111.sh run --help
 ```
 
 ## Integration with Open WebUI
@@ -43,7 +42,7 @@ If you want to generate images in [Open WebUI](https://github.com/open-webui/ope
 enable the API:
 
 ```bash
-./run.sh --api --xformers --listen
+./a1111.sh run --api --xformers --listen
 ```
 
 ## Running XL Models on Low VRAM
@@ -51,12 +50,12 @@ enable the API:
 If you run an XL model which doesn't fit into VRAM, then you may get OutOfMemory errors. In that case, add the --medvram-sdxl option.
 
 ```bash
-./run.sh --listen --xformers --medvram-sdxl
+./a1111.sh run --listen --xformers --medvram-sdxl
 ```
 # Stopping the Container
 To stop the container, use:
 
 ```bash
-$ docker stop automatik1111
+./a1111.sh stop
 ```
-You can also interrupt the `run.sh` by pressing `Ctrl+C` 3 times.
+You can also interrupt the `a1111.sh` by pressing `Ctrl+C` 3 times.

@@ -13,7 +13,6 @@ RUN apt update && \
         less \
         libgl1 \
         lsb-release \
-        mc \
         nano \
         pciutils \
         sudo  \

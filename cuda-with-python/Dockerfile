@@ -3,8 +3,8 @@ FROM ${BASE_IMAGE}
 LABEL maintainer="Sergey Grigoriev <s.a.grigoriev@gmail.com>"
 LABEL description="Ubuntu-based image with CUDA and Python, tailored for Stable Diffusion"
 
-USER root
-RUN apt install -y --no-install-recommends \
+RUN apt update && \
+    apt install -y --no-install-recommends \
     build-essential \
     git \
     libbz2-dev \
@@ -22,6 +22,7 @@ RUN apt install -y --no-install-recommends \
     xz-utils \
     zlib1g-dev && \
   apt clean && \
+  rm -rf /var/lib/apt/lists/* && \
   cd  /tmp && \
   wget https://www.python.org/ftp/python/3.10.14/Python-3.10.14.tgz && \
   tar -xzf Python-3.10.14.tgz && \

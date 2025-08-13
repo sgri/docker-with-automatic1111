@@ -76,11 +76,11 @@ jobs:
           image_tags: nvidia535-cuda12.2-python3.10.14
           build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda:nvidia535-cuda12.2
   
-  build-automatik1111:
+  build-a1111:
     executor: linux-machine
     steps:
       - build-image:
-          image_name: automatik1111
+          image_name: a1111
           image_tags: nvidia535-cuda12.2-python3.10.14
           build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda-with-python:nvidia535-cuda12.2-python3.10.14
 
@@ -93,10 +93,10 @@ workflows:
     when: << pipeline.parameters.run_cuda_with_python >>
     jobs:
       - build-cuda-with-python
-  automatik1111:
+  a1111:
     when: << pipeline.parameters.run_a1111 >>
     jobs:
-      - build-automatik1111
+      - build-a1111
   cuda-manual:
     when:
       not: << pipeline.parameters.run_cuda >>
@@ -115,12 +115,12 @@ workflows:
       - build-cuda-with-python:
           requires:
             - approve
-  automatik1111-manual:
+  a1111-manual:
     when:
       not: << pipeline.parameters.run_a1111 >>
     jobs:
       - approve:
           type: approval
-      - build-automatik1111:
+      - build-a1111:
           requires:
             - approve
