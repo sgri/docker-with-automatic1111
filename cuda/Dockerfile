@@ -27,5 +27,6 @@ RUN apt update && \
       libnvidia-ml-dev \
       nvidia-utils-535 && \
       apt clean && \
+      rm -rf /var/lib/apt/lists/* && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
       deluser --remove-home ubuntu 
