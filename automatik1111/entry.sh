@@ -16,10 +16,10 @@ fi
 if ! getent group $GROUP_ID > /dev/null; then
   groupadd -g $GROUP_ID automatik1111
 fi
-if id automatik1111 &>/dev/null; then
-  usermod -u $USER_ID -g $GROUP_ID automatik1111
+if id automatik1111 &>/dev/null && [[ $(id -g automatik1111) -ne $GROUP_ID ]]; then
+  usermod -u $USER_ID -g $GROUP_ID -G users automatik1111
 else
-  useradd -M -s /bin/bash -u $USER_ID -g $GROUP_ID automatik1111
+  useradd -M -s /bin/bash -u $USER_ID -g $GROUP_ID -G users automatik1111
 fi
    
 unset USER_ID
