@@ -22,43 +22,46 @@ commands:
         type: string
       image_tags:
         type: string
-      build_args:
+      base_image:
         type: string
         default: ""
     steps:
       - checkout
       - run:
-          name: Activate service account
+          name: Set up environment variables
           command: |
             set -euo pipefail
-            build_agent_key=$(mktemp)
-            echo "${BUILD_AGENT_KEY}" > $build_agent_key
-            gcloud auth activate-service-account --key-file=$build_agent_key
-            
-            echo "set -euo pipefail" >> "$BASH_ENV"
-            echo "GOOGLE_APPLICATION_CREDENTIALS=${build_agent_key}" >> $BASH_ENV
+            echo "IMAGE_PREFIX=ghcr.io/sgri/amber" >> $BASH_ENV
       - run:
-          name: Connect Docker to artifact registry
+          name: Login to GHCR
           command: |
-            gcloud auth configure-docker us-central1-docker.pkg.dev
+            set -euo pipefail
+            echo "${GHCR_TOKEN}" | docker login ghcr.io -u sgri --password-stdin
+
       - run:
           name: Build Docker image
           command: |
-            cd << parameters.image_name >>
-            docker build --progress=plain << parameters.build_args >> -t << parameters.image_name >> .
+            set -euo pipefail
+
+            cd "<< parameters.image_name >>"
+            if [ -n "<< parameters.base_image >>" ]; then
+              BUILD_ARGS="--build-arg BASE_IMAGE=${IMAGE_PREFIX}/<< parameters.base_image >>"
+            else
+              BUILD_ARGS=""
+            fi
+            docker build --progress=plain $BUILD_ARGS -t << parameters.image_name >> .
+
       - run:
-          name: Push Docker image
+          name: Tag and push Docker image
           command: |
-            IMAGE_NAME=us-central1-docker.pkg.dev/${PROJECT_ID}/amber/<< parameters.image_name >>
+            set -euo pipefail
+
+            IMAGE_ADDRESS="${IMAGE_PREFIX}/<< parameters.image_name >>"
+
             for tag in << parameters.image_tags >>; do
-              docker tag  << parameters.image_name >> ${IMAGE_NAME}:${tag}
-              docker push ${IMAGE_NAME}:${tag}            
+              docker tag "<< parameters.image_name >>" "${IMAGE_ADDRESS}:${tag}"
+              docker push "${IMAGE_ADDRESS}:${tag}"
             done
-      - run:
-          name: Clean up
-          when: always
-          command: |
-            rm -f $GOOGLE_APPLICATION_CREDENTIALS 
 
 jobs:
   build-cuda:
@@ -67,36 +70,39 @@ jobs:
       - build-image:
           image_name: cuda
           image_tags: nvidia535-cuda12.2
-  
+
   build-cuda-with-python:
     executor: linux-machine
     steps:
       - build-image:
           image_name: cuda-with-python
           image_tags: nvidia535-cuda12.2-python3.10.14
-          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda:nvidia535-cuda12.2
-  
+          base_image: cuda:nvidia535-cuda12.2
+
   build-a1111:
     executor: linux-machine
     steps:
       - build-image:
           image_name: a1111
           image_tags: nvidia535-cuda12.2-python3.10.14
-          build_args: --build-arg BASE_IMAGE=us-central1-docker.pkg.dev/$PROJECT_ID/amber/cuda-with-python:nvidia535-cuda12.2-python3.10.14
+          base_image: cuda-with-python:nvidia535-cuda12.2-python3.10.14
 
 workflows:
   cuda:
     when: << pipeline.parameters.run_cuda >>
     jobs:
       - build-cuda
+
   cuda-with-python:
     when: << pipeline.parameters.run_cuda_with_python >>
     jobs:
       - build-cuda-with-python
+
   a1111:
     when: << pipeline.parameters.run_a1111 >>
     jobs:
       - build-a1111
+
   cuda-manual:
     when:
       not: << pipeline.parameters.run_cuda >>
@@ -104,8 +110,8 @@ workflows:
       - approve:
           type: approval
       - build-cuda:
-          requires:
-            - approve
+          requires: [approve]
+
   cuda-with-python-manual:
     when:
       not: << pipeline.parameters.run_cuda_with_python >>
@@ -113,8 +119,8 @@ workflows:
       - approve:
           type: approval
       - build-cuda-with-python:
-          requires:
-            - approve
+          requires: [approve]
+
   a1111-manual:
     when:
       not: << pipeline.parameters.run_a1111 >>
@@ -122,5 +128,4 @@ workflows:
       - approve:
           type: approval
       - build-a1111:
-          requires:
-            - approve
+          requires: [approve]

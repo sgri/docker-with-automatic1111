@@ -39,11 +39,16 @@ fi
 cmd=$1
 shift
 
+IMAGE=ghcr.io/sgri/amber/a1111:nvidia535-cuda12.2-python3.10.14
+WORKSPACE=$HOME/.local/share/$APP
+PORT=7860
+DOCKER_OPTS="--gpus all"
+
 config_file="${HOME}/.config/$APP/config.rc"
 if [ ! -f "$config_file" ]; then
   mkdir -p "$(dirname "$config_file")"
   cat <<EOF > "$config_file"
-IMAGE=us-central1-docker.pkg.dev/andromeda-456013/amber/$APP:nvidia535-cuda12.2-python3.10.14
+IMAGE=ghcr.io/sgri/amber/a1111:nvidia535-cuda12.2-python3.10.14
 WORKSPACE=$HOME/.local/share/$APP
 PORT=7860
 DOCKER_OPTS="--gpus all"
@@ -52,6 +57,7 @@ EOF
 fi
 
 . "$config_file"
+echo "Using configuration from $config_file"
 
 # Execute a command and print it to the console
 function trace {

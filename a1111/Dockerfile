@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=cuda-with-python
 FROM ${BASE_IMAGE}
-LABEL maintainer="Sergey Grigoriev <s.a.grigoriev@gmail.com>"
-LABEL description="Automatik1111 web UI for Stable Diffusion"
+LABEL org.opencontainers.image.description="Automatik1111 web UI for Stable Diffusion"
+LABEL org.opencontainers.image.source="https://github.com/sgri/docker-with-automatic1111"
 
 RUN apt update && \
   apt install -y bc mc && \

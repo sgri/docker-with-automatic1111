@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=cuda
 FROM ${BASE_IMAGE}
-LABEL maintainer="Sergey Grigoriev <s.a.grigoriev@gmail.com>"
-LABEL description="Ubuntu-based image with CUDA and Python, tailored for Stable Diffusion"
+LABEL org.opencontainers.image.description="Ubuntu-based image with CUDA and Python, tailored for Stable Diffusion"
+LABEL org.opencontainers.image.source="https://github.com/sgri/docker-with-automatic1111"
 
 RUN apt update && \
     apt install -y --no-install-recommends \
@@ -35,4 +35,3 @@ RUN apt update && \
   rm  Python-3.10.14.tgz && \
   ln -s /opt/python-3.10.14/bin/python3.10 /opt/python-3.10.14/bin/python && \
   ln -s /opt/python-3.10.14/bin/pip3.10 /opt/python-3.10.14/bin/pip
-    

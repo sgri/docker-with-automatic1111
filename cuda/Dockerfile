@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
-LABEL maintainer="Sergey Grigoriev <s.a.grigoriev@gmail.com>"
-LABEL description="Ubuntu-based image with CUDA"
+LABEL org.opencontainers.image.description="Ubuntu-based image with CUDA"
+LABEL org.opencontainers.image.source="https://github.com/sgri/docker-with-automatic1111"
 
 RUN apt update && \
     apt dist-upgrade -y && \
