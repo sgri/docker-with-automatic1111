@@ -30,4 +30,4 @@ else
 fi  
 unset USER_ID
 unset GROUP_ID
-exec sudo -u a1111 /usr/local/bin/start.sh "$@"
+exec gosu a1111 /usr/local/bin/start.sh "$@"

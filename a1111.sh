@@ -14,7 +14,6 @@ Automatik1111 project page: https://github.com/AUTOMATIC1111/stable-diffusion-we
 COMMAND is one if the following:
   help           Show this help message.
   run            Start the container if it doesn't already exist, else attach to the existing container.
-  stop           Stop the container.
   pull           Pull the latest image from the registry.
 
 WEBUI_OPTIONS
@@ -25,8 +24,6 @@ Examples:
       Prints the available options for webui.sh script.
   $(basename "$0") run --api --listen --xformers --enable-insecure-extension-access --update-check --medvram-sdxl
       Starts the container with the specified options.
-  $(basename "$0") stop
-      Stops the container.
   $(basename "$0") pull
       Pulls the latest Docker image from the registry.
 EOF
@@ -38,12 +35,6 @@ if [[ $# -eq 0 ]]; then
 fi
 cmd=$1
 shift
-
-IMAGE=ghcr.io/sgri/amber/a1111:nvidia535-cuda12.2-python3.10.14
-WORKSPACE=$HOME/.local/share/$APP
-PORT=7860
-DOCKER_OPTS="--gpus all"
-
 config_file="${HOME}/.config/$APP/config.rc"
 if [ ! -f "$config_file" ]; then
   mkdir -p "$(dirname "$config_file")"
@@ -51,7 +42,7 @@ if [ ! -f "$config_file" ]; then
 IMAGE=ghcr.io/sgri/amber/a1111:nvidia535-cuda12.2-python3.10.14
 WORKSPACE=$HOME/.local/share/$APP
 PORT=7860
-DOCKER_OPTS="--gpus all"
+DOCKER_OPTS="--gpus all -e STABLE_DIFFUSION_REPO=https://github.com/w-e-w/stablediffusion.git"
 EOF
   echo "Configuration file created at $config_file"
 fi
@@ -59,30 +50,15 @@ fi
 . "$config_file"
 echo "Using configuration from $config_file"
 
-# Execute a command and print it to the console
-function trace {
-  set -x
-  "$@"    
-  { set +x; } 2>/dev/null
-}
-
-function handle_sigint {
-    { set +x; } 2>/dev/null
-    echo "Ctrl+C detected, stopping the container."
-    trace docker stop $APP>/dev/null
-    exit
-}
-
 if [[ "$cmd" == "help" ]]; then
     usage
     exit
 elif [[ "$cmd" == "pull" ]]; then
-    trace docker pull $IMAGE
+    set -x
+    docker pull $IMAGE
     exit
 elif [[ "$cmd" == "run" ]]; then
    : # This is a no-op, the actual run command is handled later
-elif [[ "$cmd" == "stop" ]]; then
-    handle_sigint
 else
     echo "Unknown command: $cmd"
     usage
@@ -98,10 +74,12 @@ else
     exit 1
 fi
 
-function start_container {
-  user_id=$(id -u)
-  group_id=$(id -g)
-  trace docker run $DOCKER_OPTS \
+trap 'docker stop a1111 >/dev/null 2>&1 || true' INT TERM EXIT
+
+user_id=$(id -u)
+group_id=$(id -g)
+set -x
+docker run --rm $DOCKER_OPTS \
     -e USER_ID=$user_id \
     -e GROUP_ID=$group_id \
     --name $APP \
@@ -109,29 +87,3 @@ function start_container {
     -v "$WORKSPACE":/home/$APP \
     $IMAGE \
     "$@"
-}
-trap handle_sigint SIGINT
-
-if docker inspect $APP >/dev/null; then
-    container_args=$(docker inspect --format '{{.Path}} {{join .Args " "}}' $APP)
-    read -ra old_args <<< "$container_args"
-    old_args=("${old_args[@]:1}") # Skip the first element which is the entrypoint
-    read -ra new_args <<< "$*"
-    if cmp -s <(printf '%s\0' "${old_args[@]}") <(printf '%s\0' "${new_args[@]}"); then
-      echo "Attaching to the exising container."
-      trace docker start $APP>/dev/null
-      trace docker attach $APP
-    else
-      set +e
-      diff <(printf "%s\n" "${old_args[@]}") <(printf "%s\n" "${new_args[@]}")
-      set -e
-      echo "Re-creating the container with new arguments."
-      if [[ $(docker inspect -f '{{.State.Running}}' $APP) == "true" ]]; then
-        trace docker stop $APP>/dev/null
-      fi
-      trace docker rm $APP>/dev/null
-      start_container "$@"
-    fi
-else
-  start_container "$@"
-fi    

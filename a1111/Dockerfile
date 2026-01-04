@@ -4,7 +4,7 @@ LABEL org.opencontainers.image.description="Automatic1111 Web UI for Stable Diff
 LABEL org.opencontainers.image.source="https://github.com/sgri/docker-with-automatic1111"
 
 RUN apt update && \
-  apt install -y bc mc && \
+  apt install -y gosu bc mc && \
   apt clean && \
   rm -rf /var/lib/apt/lists/*
 
