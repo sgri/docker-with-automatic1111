@@ -79,7 +79,7 @@ trap 'docker stop a1111 >/dev/null 2>&1 || true' INT TERM EXIT
 user_id=$(id -u)
 group_id=$(id -g)
 set -x
-docker run --rm $DOCKER_OPTS \
+docker run --init --rm $DOCKER_OPTS \
     -e USER_ID=$user_id \
     -e GROUP_ID=$group_id \
     --name $APP \
