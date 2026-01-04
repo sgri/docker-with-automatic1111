@@ -52,14 +52,6 @@ to [webui.sh](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/maste
 
 When you run `a1111.sh`, a configuration file is created at `${HOME}/.config/a1111/config.rc` if it does not already exist. This file contains variables to configure the Docker container.
 
-The default contents are:
-
-```bash
-IMAGE=ghcr.io/sgri/amber/a1111:nvidia535-cuda12.2-python3.10.14
-WORKSPACE=$HOME/.local/share/a1111
-PORT=7860
-DOCKER_OPTS="--gpus all"
-```
 ## Integration with Open WebUI
 
 If you want to generate images in [Open WebUI](https://github.com/open-webui/open-webui) using Stable Diffusion, then
