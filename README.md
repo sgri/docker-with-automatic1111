@@ -24,7 +24,7 @@ chmod +x a1111.sh
 ```
 
 # Running the Image
-Root privileges are not required to run the container and must not be used.
+Root privileges aren’t required to run the container and must not be used. Docker’s privileged mode must not be used either.
 
 To start the image, use:
 
