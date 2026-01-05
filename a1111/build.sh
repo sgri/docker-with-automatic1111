@@ -3,4 +3,4 @@ set -eu
 dir=$(dirname $0)
 
 cd "$dir"
-docker build -t automatik1111 .
+docker build -t Automatic1111 .

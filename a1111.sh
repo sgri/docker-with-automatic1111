@@ -6,10 +6,10 @@ usage() {
   cat <<EOF
 Usage: $(basename "$0") COMMAND WEBUI_OPTIONS
 
-Runs Automatik1111 in a Docker container. Creates a configuration file at $HOME/.config/$APP/config.rc if it does not exist.
+Runs Automatic1111 in a Docker container. Creates a configuration file at $HOME/.config/$APP/config.rc if it does not exist.
 
-Automatik1111 is a free and open-source web-based interface for Stable Diffusion.
-Automatik1111 project page: https://github.com/AUTOMATIC1111/stable-diffusion-webui
+Automatic1111 is a free and open-source web-based interface for Stable Diffusion.
+Automatic1111 project page: https://github.com/AUTOMATIC1111/stable-diffusion-webui
 
 COMMAND is one if the following:
   help           Show this help message.
